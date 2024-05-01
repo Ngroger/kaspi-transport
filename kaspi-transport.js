@@ -31,7 +31,10 @@ app.get('/api-check/:pdfName', (req, res) => {
 async function generateAndSavePDF(txn_date, txn_id, sum, account) {
     const fileName = `transfer-receipt-${txn_date}.pdf`;
     const filePath = `checks/${fileName}`;
-
+    
+    // Форматируем и выводим дату транзакции
+    const formattedDate = formatDate(txn_date);
+    
     // Создаем новый PDF-документ
     const doc = new PDFDocument();
 
@@ -41,7 +44,7 @@ async function generateAndSavePDF(txn_date, txn_id, sum, account) {
 
     doc.font('CustomFont')
 
-    // Загружаем логотип компании
+    // Загружаем логотип Kaspi.kz
     const logoUrl = "https://upload.wikimedia.org/wikipedia/ru/thumb/a/aa/Logo_of_Kaspi_bank.png/800px-Logo_of_Kaspi_bank.png";
     const logoResponse = await axios.get(logoUrl, { responseType: 'arraybuffer' });
     const logoImageData = Buffer.from(logoResponse.data, 'binary');
@@ -49,8 +52,6 @@ async function generateAndSavePDF(txn_date, txn_id, sum, account) {
     // Вставляем логотип компании в PDF-документ
     doc.image(logoImageData, 10, 10, { width: 100 });
 
-    // Форматируем и выводим дату транзакции
-    const formattedDate = formatDate(txn_date);
     doc.moveDown();
     doc.moveDown();
     doc.moveDown();
